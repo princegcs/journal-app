@@ -11,6 +11,7 @@ import com.princegcs.JournalApplication.repository.JournalEntryRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -121,8 +122,7 @@ public class JournalEntryService {
                 .anyMatch(e -> e.getId().equals(id));
 
         if (!exists) {
-            throw new RuntimeException("Entry does not belong to user");
-        }
+            throw new AccessDeniedException("Journal entry does not belong to the current user");        }
 
         JournalEntry entry = journalEntryRepo.findById(id)
                 .orElseThrow(() -> {

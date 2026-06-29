@@ -1,6 +1,7 @@
 package com.princegcs.JournalApplication.service;
 
 import com.princegcs.JournalApplication.dto.WeatherResponseDTO;
+import com.princegcs.JournalApplication.exception.WeatherApiException;
 import com.princegcs.JournalApplication.external.weather.WeatherApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,9 +69,10 @@ public class WeatherService {
 
         } catch (Exception e) {
 
-            log.error("Weather API failed for city {}", city, e);
+            log.error("Weather API request failed for city {}", city, e);
 
-            return null;
+            throw new WeatherApiException(
+                    "Failed to fetch weather information");
         }
     }
 }

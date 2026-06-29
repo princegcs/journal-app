@@ -49,4 +49,61 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
+
+    @ExceptionHandler(GeminiApiException.class)
+    public ResponseEntity<ErrorResponse> handleGeminiApiException(
+            GeminiApiException ex) {
+
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                HttpStatus.BAD_GATEWAY.value(),
+                System.currentTimeMillis()
+
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(error);
+    }
+
+    @ExceptionHandler(WeatherApiException.class)
+    public ResponseEntity<ErrorResponse> handleWeatherApiException(
+            WeatherApiException ex) {
+
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                HttpStatus.BAD_GATEWAY.value(),
+                System.currentTimeMillis()
+
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(error);
+    }
+
+    @ExceptionHandler(TextToSpeechException.class)
+    public ResponseEntity<ErrorResponse> handleTextToSpeechException(
+            TextToSpeechException ex) {
+
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                HttpStatus.BAD_GATEWAY.value(),
+                System.currentTimeMillis()
+
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(error);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(
+            AccessDeniedException ex) {
+
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                HttpStatus.FORBIDDEN.value(),
+                System.currentTimeMillis()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(error);
+    }
 }

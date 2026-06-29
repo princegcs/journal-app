@@ -1,7 +1,8 @@
 package com.princegcs.JournalApplication.service;
 
-import com.princegcs.JournalApplication.external.ai.GeminiRequestDTO;
+import com.princegcs.JournalApplication.exception.GeminiApiException;
 import com.princegcs.JournalApplication.external.ai.GeminiApiResponse;
+import com.princegcs.JournalApplication.external.ai.GeminiRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,8 +59,7 @@ public class GeminiService {
             GeminiApiResponse body = response.getBody();
 
         if (body == null || body.getSteps() == null) {
-            throw new RuntimeException("Invalid response from Gemini");
-        }
+            throw new GeminiApiException("Invalid response received from Gemini API");        }
 
         for (GeminiApiResponse.Step step : body.getSteps()) {
 
@@ -72,13 +72,11 @@ public class GeminiService {
                         .getText();
             }
         }
-        }catch (Exception e){
-            log.error("Error while calling Gemini API", e);
-
-            throw e;
+        }catch (Exception e) {
+            log.error("Gemini API call failed", e);
+            throw new GeminiApiException("Failed to communicate with Gemini API");
         }
-        throw new RuntimeException("No model output received from Gemini");
-    }
+        throw new GeminiApiException("No model output received from Gemini API");    }
 
 }
 

@@ -1,6 +1,7 @@
 package com.princegcs.JournalApplication.service;
 
 
+import com.princegcs.JournalApplication.exception.TextToSpeechException;
 import com.princegcs.JournalApplication.external.TextToSpeech.TextToSpeechApiRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,9 +60,9 @@ public class TextToSpeechService {
 
         } catch (Exception e) {
 
-            log.error("Failed to generate speech", e);
+            log.error("Failed to generate speech using ElevenLabs API", e);
 
-            return null;
+            throw new TextToSpeechException("Failed to generate speech from text");
         }
     }
 
