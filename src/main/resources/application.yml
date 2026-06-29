@@ -1,0 +1,39 @@
+# Note: Both application.properties and application.yml are included for learning.
+# Use either one based on your preference.
+
+spring:
+  data:
+    mongodb:
+      auto-index-creation: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  mongodb:
+    uri: ${MONGODB_URI}
+
+weather:
+  api:
+    key: ${WEATHER_API_KEY}
+    url: ${WEATHER_API_URL}
+
+elevenlabs:
+  api:
+    key: ${ELEVENLABS_API_KEY}
+    url: ${ELEVENLABS_API_URL}
+  voice:
+    id: ${ELEVENLABS_VOICE_ID}
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY}
+    url: ${GEMINI_API_URL}
+  model: ${GEMINI_MODEL}
