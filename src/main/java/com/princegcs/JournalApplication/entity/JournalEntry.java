@@ -13,13 +13,9 @@ import java.time.LocalDateTime;
 public class JournalEntry {
     @Id
     private ObjectId id;
-
     private String title;
-
     private String content;
-
     private LocalDateTime date;
-
     private Sentiment sentiment;
-
+    private WeatherInfo weatherInfo;
 }

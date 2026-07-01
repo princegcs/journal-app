@@ -1,5 +1,6 @@
 package com.princegcs.JournalApplication.dto;
 
+import com.princegcs.JournalApplication.entity.WeatherInfo;
 import com.princegcs.JournalApplication.enums.Sentiment;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,5 +14,6 @@ public class JournalResponseDTO {
     private String title;
     private String content;
     private Sentiment sentiment;
+    private WeatherInfo weatherInfo;
     private LocalDateTime date;
 }

@@ -54,15 +54,13 @@ public class UserController {
 
         String userName = authentication.getName();
 
-        WeatherResponseDTO weather =
-                weatherService.getWeather(city);
+        WeatherResponseDTO weather = weatherService.getWeather(city);
 
         String greeting = "Namaste " + userName;
 
         if (weather != null) {
 
-            greeting +=
-                    ", weather in "
+            greeting += ", weather in "
                             + city
                             + " is "
                             + weather.getCondition()

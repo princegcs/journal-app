@@ -29,7 +29,7 @@ public class JournalEntryService {
     private final UserService userService;
     private final SentimentAnalysisService sentimentAnalysisService;
     private final TextToSpeechService textToSpeechService;
-
+    private final WeatherService weatherService;
 
     // Entity → DTO
     private JournalResponseDTO mapToDTO(JournalEntry journalEntry) {
@@ -39,6 +39,7 @@ public class JournalEntryService {
         dto.setContent(journalEntry.getContent());
         dto.setSentiment(journalEntry.getSentiment());
         dto.setDate(journalEntry.getDate());
+        dto.setWeatherInfo(journalEntry.getWeatherInfo());
         return dto;
     }
 
@@ -61,10 +62,10 @@ public class JournalEntryService {
         entry.setTitle(dto.getTitle());
         entry.setContent(dto.getContent());
         entry.setDate(LocalDateTime.now());
-        System.out.println("Before analyze");
+//        System.out.println("Before analyze");
         entry.setSentiment(analyzeSentiment(dto.getContent()));
 
-
+       entry.setWeatherInfo(weatherService.getWeatherInfo(user.getCity()));
 
         JournalEntry savedEntry = journalEntryRepo.save(entry);
 

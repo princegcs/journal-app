@@ -12,10 +12,7 @@ import org.bson.types.ObjectId;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.logging.Logger;
 
 @Slf4j
 @Service
@@ -29,6 +26,9 @@ public class UserService {
         UserResponseDTO dto = new UserResponseDTO();
         dto.setId(user.getId().toHexString());
         dto.setUserName(user.getUserName());
+        dto.setEmail(user.getEmail());
+        dto.setCity(user.getCity());
+        dto.setSentiment(user.isSentimentAnalysis());
         return dto;
     }
 
@@ -45,6 +45,9 @@ public class UserService {
         user.setUserName(dto.getUserName());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setRoles(roles);
+        user.setEmail(dto.getEmail());
+        user.setCity(dto.getCity());
+        user.setSentimentAnalysis(dto.isSentimentAnalysis());
         User savedUser = userRepo.save(user);
 
         log.info("User created: {}", savedUser.getUserName());
@@ -72,16 +75,12 @@ public class UserService {
             return new ResourceNotFoundException("User not found");
         });
 
-//        UserResponseDTO dto = new UserResponseDTO();
-//        dto.setId(user.getId().toHexString());
-//        dto.setUserName(user.getUserName());
     return mapToDTO(user);
 
     }
 
     public UserResponseDTO updateUser(UserUpdateDTO dto, String userName){
-        User user = userRepo.findByUserName(userName)
-                .orElseThrow(() -> {
+        User user = userRepo.findByUserName(userName).orElseThrow(() -> {
                     log.warn("User not found: {}", userName);
                     return new ResourceNotFoundException("User not found");
                 });
@@ -94,6 +93,18 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
+        if(dto.getCity() != null && !dto.getCity().isEmpty()){
+            user.setCity(dto.getCity());
+        }
+
+        if(dto.getEmail() != null && !dto.getEmail().isEmpty()){
+            user.setEmail(dto.getEmail());
+        }
+
+       if (dto.isSentimentAnalysis()){
+           user.setSentimentAnalysis(dto.isSentimentAnalysis());
+       }
+
         User savedUser = userRepo.save(user);
 
         return mapToDTO(savedUser);
@@ -102,16 +113,14 @@ public class UserService {
 
 //internal method, used by journalService.
     public User findByUserName(String userName) {
-        return userRepo.findByUserName(userName)
-                .orElseThrow(() -> {
+        return userRepo.findByUserName(userName).orElseThrow(() -> {
                     log.warn("User not found: {}", userName);
                     return new ResourceNotFoundException("User not found");
                 });
     }
 
     public void deleteByUserName(String userName){
-       User user =  userRepo.findByUserName(userName)
-                .orElseThrow(() -> {
+       User user =  userRepo.findByUserName(userName).orElseThrow(() -> {
                     log.warn("User not found: {}", userName);
                     return new ResourceNotFoundException("User not found");
                 });
@@ -119,8 +128,7 @@ public class UserService {
     }
 
     public UserResponseDTO getUserByUserName(String userName){
-        User user =  userRepo.findByUserName(userName)
-                .orElseThrow(() -> {
+        User user =  userRepo.findByUserName(userName).orElseThrow(() -> {
                     log.warn("User not found: {}", userName);
                     return new ResourceNotFoundException("User not found");
                 });

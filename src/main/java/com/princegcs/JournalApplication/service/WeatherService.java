@@ -1,6 +1,7 @@
 package com.princegcs.JournalApplication.service;
 
 import com.princegcs.JournalApplication.dto.WeatherResponseDTO;
+import com.princegcs.JournalApplication.entity.WeatherInfo;
 import com.princegcs.JournalApplication.exception.WeatherApiException;
 import com.princegcs.JournalApplication.external.weather.WeatherApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,33 @@ public class WeatherService {
     private final RestTemplate restTemplate;
 
     public WeatherResponseDTO getWeather(String city) {
+        WeatherApiResponse response = fetchWeather(city);
+        return mapToResponseDTO(response);
+    }
+
+    public WeatherInfo getWeatherInfo(String city) {
+        WeatherApiResponse response = fetchWeather(city);
+        return mapToWeatherInfo(response);
+    }
+
+    private WeatherResponseDTO mapToResponseDTO(WeatherApiResponse response){
+
+            WeatherResponseDTO dto = new WeatherResponseDTO();
+            dto.setCity(response.getLocation().getCity());
+            dto.setTemperature(response.getCurrent().getTempC());
+            dto.setCondition(response.getCurrent().getCondition().getText());
+    return dto;
+    }
+
+    private WeatherInfo mapToWeatherInfo(WeatherApiResponse response){
+        WeatherInfo weatherInfo = new WeatherInfo();
+        weatherInfo.setCondition(response.getCurrent().getCondition().getText());
+        weatherInfo.setTemperature(response.getCurrent().getTempC());
+    return weatherInfo   ;
+    }
+
+    //API call
+    private WeatherApiResponse fetchWeather(String city) {
 
         String location = city + ", India";
         try {
@@ -48,24 +76,12 @@ public class WeatherService {
 
             WeatherApiResponse apiResponse = response.getBody();
 
-            if (apiResponse == null ||
-                    apiResponse.getCurrent() == null) {
+            if (apiResponse == null || apiResponse.getCurrent() == null) {
                 return null;
             }
 
-            WeatherResponseDTO dto = new WeatherResponseDTO();
 
-            dto.setCity(city);
-            dto.setTemperature(
-                    apiResponse.getCurrent().getTempC()
-            );
-
-            dto.setCondition(apiResponse.getCurrent()
-                            .getCondition()
-                            .getText()
-            );
-
-            return dto;
+            return apiResponse;
 
         } catch (Exception e) {
 

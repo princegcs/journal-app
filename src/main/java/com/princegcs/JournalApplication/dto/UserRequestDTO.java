@@ -18,6 +18,9 @@ public class UserRequestDTO {
     @Email(message = "Invalid email format")
     private String email;
 
+    @NotBlank(message = "City is required")
+    private String city;
+
     private boolean sentimentAnalysis;
 
     @NotBlank(message = "Password is required")

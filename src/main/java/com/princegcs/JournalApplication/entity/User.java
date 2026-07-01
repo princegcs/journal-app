@@ -22,18 +22,13 @@ public class User {
     @NonNull
     @Indexed(unique = true)
     private String userName;
-
-    @NonNull
     private String email;
-
+    private String city;
     private boolean sentimentAnalysis;
-
-    @NonNull
     private String password;
-
     @DBRef
     private List<JournalEntry> journalEntries = new ArrayList<>();
-
     private List<String> roles;
+
 
 }

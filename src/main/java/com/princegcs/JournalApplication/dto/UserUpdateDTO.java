@@ -16,6 +16,8 @@ public class UserUpdateDTO {
     @Email(message = "Invalid email format")
     private String email;
 
+    private String city;
+
     private boolean sentimentAnalysis;
 
 
