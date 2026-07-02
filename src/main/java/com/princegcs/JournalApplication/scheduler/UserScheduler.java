@@ -32,8 +32,7 @@ public class UserScheduler {
         for (User user : usersForSentimentAnalysis){
             List<JournalEntry> journalEntries = user.getJournalEntries();
             List<Sentiment> sentimentList = journalEntries.stream()
-                    .filter(x -> x.getDate()
-                            .isAfter(LocalDateTime.now().minus(7, ChronoUnit.DAYS)))
+                    .filter(x -> x.getDate().isAfter(LocalDateTime.now().minus(7, ChronoUnit.DAYS)))
                     .map(x -> x.getSentiment()).collect(Collectors.toList());
 
             Map<Sentiment, Integer> sentimentCounts = new HashMap<>();
@@ -57,7 +56,6 @@ public class UserScheduler {
             if( mostFrequentSentiment != null ) {
 
                 emailService.sendEmail(user.getEmail(), "Sentiment for last 7 days", mostFrequentSentiment.toString());
-
             }
         }
     }

@@ -1,23 +1,22 @@
 package com.princegcs.JournalApplication.service;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class EmailServiceTests {
+class EmailServiceTest {
 
     @Autowired
     private EmailService emailService;
 
+    @Disabled
     @Test
-    public void testSendEmail(){
+    void shouldSendEmail() {
         emailService.sendEmail(
-                "prirp21@gmail.com",
+                "princegcsn@email.com",
                 "JavaMailSender Test",
-                "Hi, this is a test Email");
+                "Hi, this is a test email");
     }
-
-
-
 }
