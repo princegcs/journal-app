@@ -20,7 +20,7 @@ public class TextToSpeechService {
     @Value("${elevenlabs.voice.id}")
     private String voiceId;
 
-    @Value("${elevenlabs.url}")
+    @Value("${elevenlabs.api.url}")
     private String elevenLabsUrl;
 
     private final RestTemplate restTemplate;
