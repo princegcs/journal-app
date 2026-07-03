@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.Duration;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -25,10 +27,32 @@ public class WeatherService {
     private String weatherUrl;
 
     private final RestTemplate restTemplate;
+    private final RedisService redisService;
+    private static final String WEATHER_CACHE_PREFIX = "weather:";
+
+    private String getCacheKey(String city) {
+        return WEATHER_CACHE_PREFIX + city.toLowerCase();
+    }
+
 
     public WeatherResponseDTO getWeather(String city) {
+
+        String key = getCacheKey(city);
+        WeatherResponseDTO cachedWeather = redisService.get(key, WeatherResponseDTO.class);
+
+        if (cachedWeather != null) {
+            log.info("Weather cache hit for city: {}", city);
+            return cachedWeather;
+        }
+
         WeatherApiResponse response = fetchWeather(city);
-        return mapToResponseDTO(response);
+        WeatherResponseDTO weather = mapToResponseDTO(response);
+
+        if (weather != null) {
+            redisService.set(key, weather, Duration.ofMinutes(10));
+        }
+
+        return weather;
     }
 
     public WeatherInfo getWeatherInfo(String city) {
@@ -54,6 +78,8 @@ public class WeatherService {
 
     //API call
     private WeatherApiResponse fetchWeather(String city) {
+
+        log.info("Fetching weather from external API for city: {}", city);
 
         String location = city + ", India";
         try {

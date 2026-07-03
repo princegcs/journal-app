@@ -26,7 +26,6 @@ public class TextToSpeechService {
     private final RestTemplate restTemplate;
 
 
-
     public byte[] generateSpeech(String text) {
         try {
             TextToSpeechApiRequest request = new TextToSpeechApiRequest();
