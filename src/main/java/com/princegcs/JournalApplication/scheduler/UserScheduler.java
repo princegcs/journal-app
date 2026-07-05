@@ -3,9 +3,10 @@ package com.princegcs.JournalApplication.scheduler;
 import com.princegcs.JournalApplication.entity.JournalEntry;
 import com.princegcs.JournalApplication.entity.User;
 import com.princegcs.JournalApplication.enums.Sentiment;
+import com.princegcs.JournalApplication.model.WeeklySentimentEvent;
 import com.princegcs.JournalApplication.repository.UserRepo;
 import com.princegcs.JournalApplication.service.EmailService;
-import com.princegcs.JournalApplication.service.SentimentAnalysisService;
+import com.princegcs.JournalApplication.service.kafka.WeeklySentimentProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,8 +23,8 @@ import java.util.stream.Collectors;
 public class UserScheduler {
 
     private final EmailService emailService;
-    private final SentimentAnalysisService service;
     private final UserRepo userRepo;
+    private final WeeklySentimentProducer weeklySentimentProducer;
 
 
     @Scheduled( cron = "0 0 9 *  * Sun")
@@ -54,8 +55,12 @@ public class UserScheduler {
             }
 
             if( mostFrequentSentiment != null ) {
+                WeeklySentimentEvent event = WeeklySentimentEvent.builder()
+                        .email(user.getEmail())
+                        .sentiment(mostFrequentSentiment)
+                        .build();
+                weeklySentimentProducer.publish(event);
 
-                emailService.sendEmail(user.getEmail(), "Sentiment for last 7 days", mostFrequentSentiment.toString());
             }
         }
     }
