@@ -71,3 +71,8 @@
 #        password="${KAFKA_API_SECRET}";
 #
 #      session.timeout.ms: 45000
+
+# JWT
+#jwt
+#  secret=${JWT_SECRET}
+#  expiration=${JWT_EXPIRATION}
