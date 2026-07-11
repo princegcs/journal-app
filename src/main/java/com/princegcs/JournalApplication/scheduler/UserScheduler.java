@@ -8,6 +8,7 @@ import com.princegcs.JournalApplication.repository.UserRepo;
 import com.princegcs.JournalApplication.service.EmailService;
 import com.princegcs.JournalApplication.service.kafka.WeeklySentimentProducer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +17,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class UserScheduler {
 
     private final EmailService emailService;
@@ -27,19 +28,19 @@ public class UserScheduler {
     private final WeeklySentimentProducer weeklySentimentProducer;
 
 
-    @Scheduled( cron = "0 0 9 *  * Sun")
-    public void fetchUserAndSendEmail(){
+    @Scheduled(cron = "0 0 9 * * SUN")
+    public void fetchUserAndSendEmail() {
         List<User> usersForSentimentAnalysis = userRepo.getUsersForSentimentAnalysis();
-        for (User user : usersForSentimentAnalysis){
+        for (User user : usersForSentimentAnalysis) {
             List<JournalEntry> journalEntries = user.getJournalEntries();
             List<Sentiment> sentimentList = journalEntries.stream()
                     .filter(x -> x.getDate().isAfter(LocalDateTime.now().minus(7, ChronoUnit.DAYS)))
-                    .map(x -> x.getSentiment()).collect(Collectors.toList());
+                    .map(JournalEntry::getSentiment).toList();
 
             Map<Sentiment, Integer> sentimentCounts = new HashMap<>();
 
-            for(Sentiment sentiment : sentimentList){
-                if( sentiment != null ){
+            for (Sentiment sentiment : sentimentList) {
+                if (sentiment != null) {
                     sentimentCounts.put(sentiment, sentimentCounts.getOrDefault(sentiment, 0) + 1);
                 }
             }
@@ -47,20 +48,19 @@ public class UserScheduler {
             Sentiment mostFrequentSentiment = null;
             int maxCount = 0;
 
-            for (Map.Entry<Sentiment, Integer> entry : sentimentCounts.entrySet()){
-                if(entry.getValue() > maxCount){
+            for (Map.Entry<Sentiment, Integer> entry : sentimentCounts.entrySet()) {
+                if (entry.getValue() > maxCount) {
                     maxCount = entry.getValue();
                     mostFrequentSentiment = entry.getKey();
                 }
             }
 
-            if( mostFrequentSentiment != null ) {
+            if (mostFrequentSentiment != null) {
                 WeeklySentimentEvent event = WeeklySentimentEvent.builder()
                         .email(user.getEmail())
                         .sentiment(mostFrequentSentiment)
                         .build();
-                weeklySentimentProducer.publish(event);
-
+                    weeklySentimentProducer.publish(event);
             }
         }
     }
