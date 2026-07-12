@@ -60,7 +60,7 @@ public class UserScheduler {
                         .email(user.getEmail())
                         .sentiment(mostFrequentSentiment)
                         .build();
-                    weeklySentimentProducer.publish(event);
+                weeklySentimentProducer.publish(event);
             }
         }
     }

@@ -39,7 +39,7 @@ public class UserService {
 
     private UserResponseDTO createUserWithRole(
             UserRequestDTO dto,
-            List<String> roles){
+            List<String> roles) {
 
         User user = new User();
         user.setUserName(dto.getUserName());
@@ -56,34 +56,35 @@ public class UserService {
 
     }
 
-    public UserResponseDTO createUser(UserRequestDTO dto){
+    public UserResponseDTO createUser(UserRequestDTO dto) {
         return createUserWithRole(dto, List.of("USER"));
     }
 
-    public UserResponseDTO saveAdminUser(UserRequestDTO dto){
-      return createUserWithRole(dto, List.of("USER", "ADMIN"));
+    public UserResponseDTO saveAdminUser(UserRequestDTO dto) {
+        return createUserWithRole(dto, List.of("USER", "ADMIN"));
     }
 
-    public List<UserResponseDTO> getAllUsers(){
+    public List<UserResponseDTO> getAllUsers() {
         List<User> all = userRepo.findAll();
         return all.stream().map(this::mapToDTO).toList();
     }
 
-    public UserResponseDTO getUserById(ObjectId id){
-        User user = userRepo.findById(id).orElseThrow(() -> {
+    public UserResponseDTO getUserById(String id) {
+        ObjectId objectId = new ObjectId(id);
+        User user = userRepo.findById(objectId).orElseThrow(() -> {
             log.warn("User not found: {}", id);
             return new ResourceNotFoundException("User not found");
         });
 
-    return mapToDTO(user);
+        return mapToDTO(user);
 
     }
 
-    public UserResponseDTO updateUser(UserUpdateDTO dto, String userName){
+    public UserResponseDTO updateUser(UserUpdateDTO dto, String userName) {
         User user = userRepo.findByUserName(userName).orElseThrow(() -> {
-                    log.warn("User not found: {}", userName);
-                    return new ResourceNotFoundException("User not found");
-                });
+            log.warn("User not found: {}", userName);
+            return new ResourceNotFoundException("User not found");
+        });
 
         if (dto.getUserName() != null && !dto.getUserName().isEmpty()) {
             user.setUserName(dto.getUserName());
@@ -93,17 +94,17 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
-        if(dto.getCity() != null && !dto.getCity().isEmpty()){
+        if (dto.getCity() != null && !dto.getCity().isEmpty()) {
             user.setCity(dto.getCity());
         }
 
-        if(dto.getEmail() != null && !dto.getEmail().isEmpty()){
+        if (dto.getEmail() != null && !dto.getEmail().isEmpty()) {
             user.setEmail(dto.getEmail());
         }
 
-       if (dto.isSentimentAnalysis()){
-           user.setSentimentAnalysis(dto.isSentimentAnalysis());
-       }
+        if (dto.isSentimentAnalysis()) {
+            user.setSentimentAnalysis(dto.isSentimentAnalysis());
+        }
 
         User savedUser = userRepo.save(user);
 
@@ -111,27 +112,27 @@ public class UserService {
     }
 
 
-//internal method, used by journalService.
+    //internal method, used by journalService.
     public User findByUserName(String userName) {
         return userRepo.findByUserName(userName).orElseThrow(() -> {
-                    log.warn("User not found: {}", userName);
-                    return new ResourceNotFoundException("User not found");
-                });
+            log.warn("User not found: {}", userName);
+            return new ResourceNotFoundException("User not found");
+        });
     }
 
-    public void deleteByUserName(String userName){
-       User user =  userRepo.findByUserName(userName).orElseThrow(() -> {
-                    log.warn("User not found: {}", userName);
-                    return new ResourceNotFoundException("User not found");
-                });
-       userRepo.delete(user);
+    public void deleteByUserName(String userName) {
+        User user = userRepo.findByUserName(userName).orElseThrow(() -> {
+            log.warn("User not found: {}", userName);
+            return new ResourceNotFoundException("User not found");
+        });
+        userRepo.delete(user);
     }
 
-    public UserResponseDTO getUserByUserName(String userName){
-        User user =  userRepo.findByUserName(userName).orElseThrow(() -> {
-                    log.warn("User not found: {}", userName);
-                    return new ResourceNotFoundException("User not found");
-                });
-    return mapToDTO(user);
+    public UserResponseDTO getUserByUserName(String userName) {
+        User user = userRepo.findByUserName(userName).orElseThrow(() -> {
+            log.warn("User not found: {}", userName);
+            return new ResourceNotFoundException("User not found");
+        });
+        return mapToDTO(user);
     }
 }

@@ -1,5 +1,6 @@
 package com.princegcs.JournalApplication.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -23,6 +24,7 @@ public class UserRequestDTO {
 
     private boolean sentimentAnalysis;
 
+    @Schema(example = "ExamplePassword123!")
     @NotBlank(message = "Password is required")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).*$",

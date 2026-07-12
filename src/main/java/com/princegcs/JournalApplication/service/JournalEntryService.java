@@ -43,19 +43,16 @@ public class JournalEntryService {
         return dto;
     }
 
-    private Sentiment analyzeSentiment(String content){
+    private Sentiment analyzeSentiment(String content) {
 //        System.out.println("Inside analyzeSentiment");
         return sentimentAnalysisService.analyze(content);
     }
 
     //Saving Entry
     @Transactional
-    public JournalResponseDTO createEntry(JournalRequestDTO dto, String userName){
+    public JournalResponseDTO createEntry(JournalRequestDTO dto, String userName) {
 
         User user = userService.findByUserName(userName);
-
-//        Sentiment sentiment = sentimentAnalysisService.analyze(dto.getContent());
-
 
         // DTO → Entity
         JournalEntry entry = new JournalEntry();
@@ -65,7 +62,7 @@ public class JournalEntryService {
 //        System.out.println("Before analyze");
         entry.setSentiment(analyzeSentiment(dto.getContent()));
 
-       entry.setWeatherInfo(weatherService.getWeatherInfo(user.getCity()));
+        entry.setWeatherInfo(weatherService.getWeatherInfo(user.getCity()));
 
         JournalEntry savedEntry = journalEntryRepo.save(entry);
 
@@ -78,8 +75,6 @@ public class JournalEntryService {
     }
 
 
-
-
     //getByUser
     public List<JournalResponseDTO> getEntriesByUser(String userName) {
 
@@ -90,19 +85,20 @@ public class JournalEntryService {
     }
 
     //get - entry - by - id
-    public JournalResponseDTO getEntryByIdForUser(ObjectId id, String userName) {
+    public JournalResponseDTO getEntryByIdForUser(String id, String userName) {
 
         User user = userService.findByUserName(userName);
+        ObjectId objectId = new ObjectId(id);
 
         boolean exists = user.getJournalEntries()
                 .stream()
-                .anyMatch(entry -> entry.getId().equals(id));
+                .anyMatch(entry -> entry.getId().equals(objectId));
 
         if (!exists) {
             throw new ResourceNotFoundException("Entry not found for this user");
         }
 
-        JournalEntry entry = journalEntryRepo.findById(id)
+        JournalEntry entry = journalEntryRepo.findById(objectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Entry not found"));
 
         return mapToDTO(entry);
@@ -111,24 +107,26 @@ public class JournalEntryService {
 
     //Update - Entry
     @Transactional
-    public JournalResponseDTO updateEntry(ObjectId id, JournalUpdateDTO dto, String userName) {
+    public JournalResponseDTO updateEntry(String id, JournalUpdateDTO dto, String userName) {
 
         User user = userService.findByUserName(userName);
-
+        ObjectId objectId = new ObjectId(id);
         Sentiment sentiment = sentimentAnalysisService.analyze(dto.getContent());
 
 
         boolean exists = user.getJournalEntries()
                 .stream()
-                .anyMatch(e -> e.getId().equals(id));
+                .anyMatch(e -> e.getId().equals(objectId));
 
         if (!exists) {
-            throw new AccessDeniedException("Journal entry does not belong to the current user");        }
+            throw new AccessDeniedException("Journal entry does not belong to the current user");
+        }
 
-        JournalEntry entry = journalEntryRepo.findById(id)
+        JournalEntry entry = journalEntryRepo.findById(objectId)
                 .orElseThrow(() -> {
-                    log.warn("Entry not found: {}", id);
-                    throw new ResourceNotFoundException("Entry not found for this user");                });
+                    log.warn("Entry not found: {}", objectId);
+                    throw new ResourceNotFoundException("Entry not found for this user");
+                });
 
         if (dto.getTitle() != null && !dto.getTitle().isEmpty()) {
             entry.setTitle(dto.getTitle());
@@ -149,21 +147,22 @@ public class JournalEntryService {
 
     //Delete - BY - ID
     @Transactional
-    public void deleteById(ObjectId id, String userName) {
+    public void deleteById(String id, String userName) {
 
         User user = userService.findByUserName(userName);
+        ObjectId objectId = new ObjectId(id);
 
         boolean exists = user.getJournalEntries()
                 .stream()
-                .anyMatch(e -> id.equals(e.getId()));
+                .anyMatch(e -> objectId.equals(e.getId()));
 
         if (!exists) {
             throw new ResourceNotFoundException("Entry not found for this user");
         }
 
-        user.getJournalEntries().removeIf(e -> id.equals(e.getId()));
+        user.getJournalEntries().removeIf(e -> objectId.equals(e.getId()));
 
-        journalEntryRepo.deleteById(id);
+        journalEntryRepo.deleteById(objectId);
 
         userService.saveUser(user);
 
@@ -173,19 +172,20 @@ public class JournalEntryService {
 
     //Text - TO - Speech
 
-    public byte[] generateSpeech(ObjectId id, String userName) {
+    public byte[] generateSpeech(String id, String userName) {
 
         User user = userService.findByUserName(userName);
+        ObjectId objectId = new ObjectId(id);
 
         boolean exists = user.getJournalEntries()
                 .stream()
-                .anyMatch(entry -> entry.getId().equals(id));
+                .anyMatch(entry -> entry.getId().equals(objectId));
 
         if (!exists) {
             throw new ResourceNotFoundException("Entry not found for this user");
         }
 
-        JournalEntry entry = journalEntryRepo.findById(id)
+        JournalEntry entry = journalEntryRepo.findById(objectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Entry not found"));
 
         return textToSpeechService.generateSpeech(entry.getContent());

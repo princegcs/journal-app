@@ -6,6 +6,8 @@ import com.princegcs.JournalApplication.dto.UserRequestDTO;
 import com.princegcs.JournalApplication.dto.UserResponseDTO;
 import com.princegcs.JournalApplication.service.UserService;
 import com.princegcs.JournalApplication.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(
+        name = "Public APIs",
+        description = "Publicly accessible endpoints for authentication and user registration."
+)
 @RestController
 @RequestMapping("/public")
 @RequiredArgsConstructor
@@ -29,7 +35,11 @@ public class PublicController {
     private final JwtUtil jwtUtil;
 
     // Signup
-    @PostMapping("/singnup")
+    @PostMapping("/signup")
+    @Operation(
+            summary = "Register New User",
+            description = "Creates a new user account"
+    )
     public ResponseEntity<UserResponseDTO> signup(
             @Valid @RequestBody UserRequestDTO dto) {
 
@@ -38,8 +48,11 @@ public class PublicController {
     }
 
     // Login
-
     @PostMapping("/login")
+    @Operation(
+            summary = "User Authentication",
+            description = "Authenticates credentials and generates a secure secure JWT access token for subsequent API calls."
+    )
     public ResponseEntity<JwtResponseDTO> login(
             @Valid @RequestBody LoginRequestDTO dto) {
         authenticationManager.authenticate(

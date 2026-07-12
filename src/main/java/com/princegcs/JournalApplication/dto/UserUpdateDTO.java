@@ -1,5 +1,6 @@
 package com.princegcs.JournalApplication.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -21,6 +22,7 @@ public class UserUpdateDTO {
     private boolean sentimentAnalysis;
 
 
+    @Schema(example = "ExamplePassword123!")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).*$",
             message = "Password must contain at least one uppercase, one lowercase, one digit, and one special character"
