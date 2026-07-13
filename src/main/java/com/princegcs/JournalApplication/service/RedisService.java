@@ -17,7 +17,8 @@ public class RedisService {
     private final ObjectMapper objectMapper;
 
 
-
+    //Stores data in Redis Without expiration.
+    //Currently, unsed.
     public void set(String key, Object value) {
         try {
             String json = objectMapper.writeValueAsString(value);
@@ -28,7 +29,7 @@ public class RedisService {
     }
 
 
-    public void set(String key, Object value, Duration ttl){
+    public void set(String key, Object value, Duration ttl) {
         try {
             String json = objectMapper.writeValueAsString(value);
             redisTemplate.opsForValue().set(key, json, ttl);
@@ -38,24 +39,26 @@ public class RedisService {
 
     }
 
-    public <T> T get(String key, Class<T> clazz){
-        try{
+    public <T> T get(String key, Class<T> clazz) {
+        try {
 
             String json = redisTemplate.opsForValue().get(key);
 
-            if( json == null ) {
+            if (json == null) {
                 return null;
             }
 
-            return objectMapper.readValue(json,clazz);
+            return objectMapper.readValue(json, clazz);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Failed to cache key {}", key, e);
             return null;
         }
     }
 
 
+    //    Removes a key from Redis.
+//    Currently Unused.
     public void delete(String key) {
         try {
             redisTemplate.delete(key);

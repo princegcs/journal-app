@@ -1,78 +1,39 @@
-## Note: Both application.properties and application.yml are included for learning.
-## Use either one based on your preference.
-#
-#spring:
-#  data:
-#    mongodb:
-#      auto-index-creation: true
-#
-#    redis:
-#      host: ${REDIS_HOST}
-#      port: ${REDIS_PORT}
-#
-#  mongodb:
-#    uri: ${MONGODB_URI}
-#
-#
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: ${MAIL_USERNAME}
-#    password: ${MAIL_APP_PASSWORD}
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
-#
-#
-#weather:
-#  api:
-#    key: ${WEATHER_API_KEY}
-#    url: https://api.weatherapi.com/v1/current.json
-#
-#elevenlabs:
-#  api:
-#    key: ${ELEVENLABS_API_KEY}
-#    url: https://api.elevenlabs.io/v1/text-to-speech
-#  voice:
-#    id: ${ELEVENLABS_VOICE_ID}
-#
-#gemini:
-#  api:
-#    key: ${GEMINI_API_KEY}
-#    url: https://generativelanguage.googleapis.com/v1beta/interactions
-#  model: ${GEMINI_MODEL}
-#
-#
-#kafka:
-#    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER}
-#
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-#
-#    consumer:
-#      group-id: weekly-sentiment-group
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-#      auto-offset-reset: earliest
-#
-#      properties:
-#        spring.json.trusted.packages: com.princegcs.JournalApplication.model
-#
-#    properties:
-#      security.protocol: SASL_SSL
-#      sasl.mechanism: PLAIN
-#      sasl.jaas.config: >
-#        org.apache.kafka.common.security.plain.PlainLoginModule required
-#        username="${KAFKA_API_KEY}"
-#        password="${KAFKA_API_SECRET}";
-#
-#      session.timeout.ms: 45000
+spring:
+  data:
+    mongodb:
+      auto-index-creation: true
 
-# JWT
-#jwt
-#  secret=${JWT_SECRET}
-#  expiration=${JWT_EXPIRATION}
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    consumer:
+      group-id: weekly-sentiment-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: com.princegcs.JournalApplication.model
+
+weather:
+  api:
+    url: https://api.weatherapi.com/v1/current.json
+
+elevenlabs:
+  api:
+    url: https://api.elevenlabs.io/v1/text-to-speech
+
+gemini:
+  api:
+    url: https://generativelanguage.googleapis.com/v1beta/interactions
+
+springdoc:
+  swagger-ui:
+    path: /journal-api
+
+  api-docs:
+    path: /journal-api-docs

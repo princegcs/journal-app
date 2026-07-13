@@ -1,0 +1,63 @@
+spring:
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
+      ssl:
+        enabled: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER}
+
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: >
+        org.apache.kafka.common.security.plain.PlainLoginModule required
+        username="${KAFKA_API_KEY}"
+        password="${KAFKA_API_SECRET}";
+      session.timeout.ms: 45000
+  mongodb:
+    uri: ${MONGODB_URI}
+
+server:
+  address: 127.0.0.1
+  port: 8080
+
+weather:
+  api:
+    key: ${WEATHER_API_KEY}
+
+elevenlabs:
+  api:
+    key: ${ELEVENLABS_API_KEY}
+  voice:
+    id: ${ELEVENLABS_VOICE_ID}
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY}
+  model: ${GEMINI_MODEL}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+
+app:
+  server-url: https://journalapp.princegcs.me
+
