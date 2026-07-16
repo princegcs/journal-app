@@ -39,7 +39,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin-journal/**").hasRole("ADMIN")
                         .requestMatchers("/journal/**", "/user/**").authenticated()
-                        .requestMatchers("/admin-journal/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(
