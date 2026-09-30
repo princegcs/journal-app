@@ -36,8 +36,8 @@ spring:
     uri: ${MONGODB_URI}
 
 server:
-  address: 127.0.0.1
-  port: 8080
+  address: 0.0.0.0
+  port: ${PORT:8080}
 
 weather:
   api:
